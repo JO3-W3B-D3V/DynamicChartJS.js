@@ -44,8 +44,8 @@ function DynamicChart (mda, lbls, chartType) {
     /**
      *  @private NOTE: this is just an object which houses the @private functions
      * the data amd options below are default, I should implement a way to changed
-     * these 
-     * @type {Object}
+     * these
+     * @class PrivateObject
      */
     var PrivateObject = {
         /**
@@ -68,11 +68,11 @@ function DynamicChart (mda, lbls, chartType) {
             labels: lbls,
             datasets: [{
                 label: "Temps",
-                backgroundColor: "rgba(255,99,132,0.2)",
-                borderColor: "rgba(255,99,132,1)",
-                borderWidth: 2,
-                hoverBackgroundColor: "rgba(255,99,132,0.4)",
-                hoverBorderColor: "rgba(255,99,132,1)",
+                backgroundColor: "rgba(255,146,57,0.75)",
+                borderColor: "rgba(255,146,57,0.75)",
+                borderWidth: 1,
+                hoverBackgroundColor: "rgba(255,146,57,0.9)",
+                hoverBorderColor: "rgba(255,146,57,0.9)",
                 data: mda[0]
             }]
         },
@@ -82,13 +82,18 @@ function DynamicChart (mda, lbls, chartType) {
          * @private default setup for the options for chart.js
          */
         options : {
+            type:'bar',
+            responsive: true,
+            title: {
+                // This will change depending on the page
+            },
             maintainAspectRatio: false,
             scales: {
                 yAxes: [{
                     stacked: false,
                     gridLines: {
                         display: true,
-                        color: "rgba(255,99,132,0.2)"
+                        color: "rgba(253,168,99,0.2)"
                     },
                     ticks: {
                         beginAtZero: true
@@ -99,7 +104,10 @@ function DynamicChart (mda, lbls, chartType) {
                         display: false
                     }
                 }]
-            }
+            },
+            legend: {
+                onClick: null
+            },
         },
 
 
@@ -220,27 +228,49 @@ function DynamicChart (mda, lbls, chartType) {
 
         /**
          * @private renderChart
-         * NOTE: hte purpose of this function is to re-render the chart
+         * NOTE: the  purpose of this function is to re-render the chart
          * @return {Void}
          */
         renderChart : function () {
             var data = this.data;
             var options = this.options;
             var ctx = this.ctx;
+            var type = options.type;
 
 
             // BUG: this is where the bug i mentioned above occurs, it's a partial fix at least, rather than
             //      have the code come to a stand still at least.
-            try {
-                Chart.Bar(ctx, { data, options });
-            } catch (e) {
-                new Chart(ctx).Bar( data, options );
+            if (type.toLowerCase() == "bar") {
+                try {
+                    Chart.Bar(ctx, { data, options });
+                } catch (e) {
+                    new Chart(ctx).Bar( data, options );
+                }
+            } else if (type.toLowerCase() == "line") {
+                try {
+                    Chart.Line(ctx, { data, options });
+                } catch (e) {
+                    new Chart(ctx).Line( data, options );
+                }
+            } else if (type.toLowerCase() == "pie") {
+                try {
+                    Chart.Pie(ctx, { data, options });
+                } catch (e) {
+                    new Chart(ctx).Pie( data, options );
+                }
+            } else if (type.toLowerCase() == "pie") {
+                try {
+                    Chart.Pie(ctx, { data, options });
+                } catch (e) {
+                    new Chart(ctx).Pie( data, options );
+                }
             }
         },
     };
 
     /**
      * @public NOTE: this just contains all of the @public functions that you'd like to return
+     * @class PublicObject
      * @type {Object}
      */
     var PublicObject = {
