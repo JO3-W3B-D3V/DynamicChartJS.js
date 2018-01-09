@@ -8,3 +8,5 @@ This file is used just to demonstrate the DynamicChartJS.js file in work.
 This file is used just to demonstrate the DynamicChartJS.js file in work.
 ### DynamicChartJS.js
 This file is used to actually allow for dynamic charts.
+### chart.js
+This is just a copy of Chart.js.
