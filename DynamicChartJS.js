@@ -100,6 +100,7 @@ function DynamicChart (mda, lbls, chartType) {
 
         /**
          * @private isDefined
+         * NOTE: the purpose of this function is just to make sure that a variable is defined
          * @required @param {*} onj = the object/value that you want to test
          * @return {Boolean}
          */
