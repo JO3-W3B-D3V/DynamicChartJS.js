@@ -16,7 +16,7 @@
  *      the bug just appears that the options don't seem to work, nor does the styling
  * @return {Object}
  * @copyright Joseph Evans
- * @License MIT License
+ * @license MIT License
  */
 function DynamicChart (mda, lbls, chartType) {
 
