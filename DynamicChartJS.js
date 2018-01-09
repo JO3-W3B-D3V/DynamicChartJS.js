@@ -1,10 +1,5 @@
 /**
  * @file DynamicChartJS.js
- * @class DynamicChart the purpose of this class is to work along side chart.js,
- *        allowing the user to input some html element, and update the chart
- * @required @param {Multi Dimensional Array[Int]} mad  = multi dimensional array, an example has been provided below.
- * @required @param {Array[String]} labels = an array of labels
- * @param {String} chartType = the chart type that you want to maybe change to
  * @author Joseph Evans <joe.evs196@hotmail.co.uk>
  * @version 0.0.1
  * @file DynamicCharts.js
@@ -14,9 +9,19 @@
  * BUG: this fails when using chart.js version 1.0.2 (chart.bar is not a function)
  *      it appears that the options are seupt differently
  *      the bug just appears that the options don't seem to work, nor does the styling
- * @return {Object}
  * @copyright Joseph Evans
- * @license MIT License
+ * @license MIT-License
+ */
+
+
+
+/**
+ * @class DynamicChart the purpose of this class is to work along side chart.js,
+ *        allowing the user to input some html element, and update the chart
+ * @param {String} chartType = the chart type that you want to maybe change to
+ * @required @param {Multi Dimensional Array[Int]} mad  = multi dimensional array, an example has been provided below.
+ * @required @param {Array[String]} labels = an array of labels
+ * @return {Object}
  */
 function DynamicChart (mda, lbls, chartType) {
 
