@@ -44,8 +44,8 @@ function DynamicChart (mda, lbls, chartType) {
     /**
      *  @private NOTE: this is just an object which houses the @private functions
      * the data amd options below are default, I should implement a way to changed
-     * these
-     * @class PrivateObject
+     * these 
+     * @type {Object}
      */
     var PrivateObject = {
         /**
@@ -241,7 +241,7 @@ function DynamicChart (mda, lbls, chartType) {
 
     /**
      * @public NOTE: this just contains all of the @public functions that you'd like to return
-     * @class PublicObject
+     * @type {Object}
      */
     var PublicObject = {
 
