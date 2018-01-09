@@ -258,12 +258,6 @@ function DynamicChart (mda, lbls, chartType) {
                 } catch (e) {
                     new Chart(ctx).Pie( data, options );
                 }
-            } else if (type.toLowerCase() == "pie") {
-                try {
-                    Chart.Pie(ctx, { data, options });
-                } catch (e) {
-                    new Chart(ctx).Pie( data, options );
-                }
             }
         },
     };
