@@ -19,7 +19,7 @@
  * @class DynamicChart the purpose of this class is to work along side chart.js,
  *        allowing the user to input some html element, and update the chart
  * @param {String} chartType = the chart type that you want to maybe change to
- * @required @param {Multi Dimensional Array[Int]} mad  = multi dimensional array, an example has been provided below.
+ * @required @param {Multi Dimensional Array[Int]} mda  = multi dimensional array, an example has been provided below.
  * @required @param {Array[String]} labels = an array of labels
  * @return {Object}
  */
