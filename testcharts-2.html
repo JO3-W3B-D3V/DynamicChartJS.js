@@ -1,0 +1,55 @@
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javaScript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="DynamicChartJS.js"></script>
+    <style type="text/css">
+        body {
+            padding: 16px;
+        }
+
+        .otherContent {
+            display: block;
+            min-height: 1200px;
+        }
+
+        #chart-container {
+            position: relative;
+            margin: auto;
+            height: 80%;
+            width: 80%;
+            max-width: 400px;
+            max-height: 320px;
+            min-height: 320px;
+        }
+    </style>
+</head>
+<body>
+
+    <noscript>
+        <style>
+            .js-feature {display: none;}
+        </style>
+    </noscript>
+    <p>Works with select tags, divs, etc...</p>
+    <p>Click on the different divs that are labelled 'Data Set #' to see the chart update &amp; change.</p>
+    <div>
+        <div class="demo" data-value="0">Data Set 1</div>
+        <div class="demo" data-value="1">Data Set 2</div>
+        <div class="demo" data-value="2">Data Set 3</div>
+    </div>
+
+    <select id="demo">
+        <option value="0">Data Set 1</option>
+        <option value="1">Data Set 2</option>
+        <option value="2">Data Set 3</option>
+    </select>
+    <div id="chart-container">
+        <canvas id="chart"></canvas>
+    </div>
+    <div class="otherContent"></div>
+    <script type="text/javaScript" src="index-2.js"></script>
+</body>
+</html>
