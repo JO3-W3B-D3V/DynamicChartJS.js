@@ -1,7 +1,7 @@
 /**
  * @file DynamicChartJS.js
  * @author Joseph Evans <joe.evs196@hotmail.co.uk>
- * @version 0.0.1
+ * @version 0.0.2
  * @requires chart.js (RECOMMENDED:- version 2.7.1)
  * TODO: add the ability to change chart types
  * TODO: add the ability to change the defaults (options & data)
@@ -66,13 +66,14 @@ function DynamicChart (mda, lbls, chartType) {
         data : {
             labels: lbls,
             datasets: [{
+                type:'bar',
                 label: "Temps",
                 backgroundColor: "rgba(255,146,57,0.75)",
                 borderColor: "rgba(255,146,57,0.75)",
                 borderWidth: 1,
                 hoverBackgroundColor: "rgba(255,146,57,0.9)",
                 hoverBorderColor: "rgba(255,146,57,0.9)",
-                data: mda[0]
+                data: []
             }]
         },
 
@@ -81,7 +82,6 @@ function DynamicChart (mda, lbls, chartType) {
          * @private default setup for the options for chart.js
          */
         options : {
-            type:'bar',
             responsive: true,
             title: {
                 // This will change depending on the page
@@ -129,7 +129,7 @@ function DynamicChart (mda, lbls, chartType) {
          * @return {Boolean}
          */
         isList : function (obj) {
-            if (obj instanceof HTMLCollection
+            if ((obj instanceof HTMLCollection || obj instanceof Array)
                 || (this.isDefined(obj.length)
                 && obj.length > 1)
                 && obj.tagName.toLowerCase() != 'select'
@@ -172,7 +172,18 @@ function DynamicChart (mda, lbls, chartType) {
          * @return {Void}
          */
         updateData : function (ind, chartId) {
-            this.data.datasets[0].data = this.dataBlocks[ind];
+            var dataList = this.data.datasets;
+            if (!this.isList(this.dataBlocks[0][0])) {
+                for (var i = 0, s = dataList.length; i < s;) {
+                    this.data.datasets[i++].data = this.dataBlocks[ind];
+                }
+            } else {
+                var temp = this.dataBlocks;
+                var toUpdate = this.data.datasets;
+                for (var i = 0, s = temp.length; i < s; i++) {
+                    toUpdate[i].data = temp[i][ind];
+                }
+            }
             this.setHtmlElement(this.resetCanvas(chartId));
             this.renderChart();
         },
@@ -221,7 +232,7 @@ function DynamicChart (mda, lbls, chartType) {
          */
         runner : function (swithElm, dataAttr, chartId) {
             var ind = this.getIndex(swithElm, dataAttr);
-            this.updateData(ind, chartId)
+            this.updateData(ind, chartId);
         },
 
 
@@ -233,13 +244,24 @@ function DynamicChart (mda, lbls, chartType) {
         renderChart : function () {
             var data = this.data;
             var options = this.options;
+            var set = this.data.datasets;
             var ctx = this.ctx;
-            var type = options.type;
+            var type = set.type;
 
 
             // BUG: this is where the bug i mentioned above occurs, it's a partial fix at least, rather than
             //      have the code come to a stand still at least.
-            if (type.toLowerCase() == "bar") {
+            if (set.length > 1 || !this.isDefined(type)) {
+                try {
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: data,
+                        options: options
+                    });
+                } catch (e) {
+                    alert(e.message);
+                }
+            } else if (type.toLowerCase() == "bar") {
                 try {
                     Chart.Bar(ctx, { data, options });
                 } catch (e) {
@@ -259,6 +281,55 @@ function DynamicChart (mda, lbls, chartType) {
                 }
             }
         },
+
+
+        /**
+         * @private labelExists
+         * NOTE: the purpose of this function is to scan across the labels when you want multiple charts
+         * @return {Boolean}
+         */
+        labelExists : function (x) {
+            var lblArray = [];
+            var sets = this.data.datasets;
+            for (var i = 0, s = sets.length; i < s; i++) {
+                lblArray.push(sets[i].label);
+            }
+
+
+            if (lblArray.length < 2) {
+                return false;
+            } else if (lblArray.indexOf(x) > -1) {
+                return true;
+            } else {
+                return false;
+            }
+        },
+
+
+        /**
+         * @private renderMultiCharts
+         * NOTE: the purpose of this function is to render multiple charts at the same time, ont eh same canvas
+         * TODO: make this functionality a bit more discrete and solid/reliable
+         * @required @param {Object} extra = additional data elm to put into the dataset
+         * @return {Void}
+         */
+        renderMultiCharts : function (extra) {
+            if (!this.isDefined(extra)) return null;
+            if (!this.isDefined(extra.label)) return null;
+            var allowPush = false;
+            var s = this.data.datasets.length;
+            var sets = this.data.datasets;
+
+            for (var i = 0; i < s; i++) {
+                var lbl = this.data.datasets[i].label;
+                if (!this.labelExists(lbl)) {
+                    allowPush = true;
+                    break;
+                }
+            }
+
+            if (allowPush) {this.data.datasets.push(extra); }
+        }
     };
 
     /**
@@ -272,16 +343,27 @@ function DynamicChart (mda, lbls, chartType) {
         /**
          * @public showChart
          * NOTE: the purpose of this function is to just initiate the object
+         * TODO: allow for an array of extra objects to be inseted
          * @required @param {String} chartId = the name of the id chart element
          * @required @param {String} eventType = the event that updates the chart
          * @required @param {HTML Object} swithElm = the switching elemnt
          * @required @param {String} dataAttr = the data attribute(s)
          * @param {Int} ind = the initial index that you wish to load
-         * @param {Object} data = the data object to be passed into the private object
-         * @param {Object} options = the options to be passed into the private object
+         * @param {Object} extra = another setup for multi chart setup
          * @return {Void}
          */
-        showChart : function (chartId, eventType, swithElm, dataAttr, ind, data, options) {
+        showChart : function (chartId, eventType, swithElm, dataAttr, ind, extra) {
+            /**
+             * NOTE: allows to run multiple charts on the same canvas
+             * TODO: make more discrete & encapsulated
+             */
+            if (PrivateObject.isDefined(PrivateObject.dataBlocks[ind])
+                && PrivateObject.isList(PrivateObject.dataBlocks[ind])) {
+                    PrivateObject.renderMultiCharts(extra);
+                    PrivateObject.updateData(ind, chartId);
+            }
+
+
             if (PrivateObject.isDefined(ind) && !isNaN(ind) && ind > -1) {
                 PrivateObject.data.datasets[0].data = PrivateObject.dataBlocks[ind];
             } if (PrivateObject.isDefined(data) && typeof data == 'object') {
@@ -308,6 +390,7 @@ function DynamicChart (mda, lbls, chartType) {
                 addEventHandler(swithElm, eventType, tempFunction);
             }
         },
+
 
         /**
          * @public getData
