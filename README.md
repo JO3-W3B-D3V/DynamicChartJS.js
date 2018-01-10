@@ -6,6 +6,12 @@ This allows you to create dynamic charts while using Chart.JS, I plan to allow t
 This file is used just to demonstrate the DynamicChartJS.js file in work.
 ### testcharts.html
 This file is used just to demonstrate the DynamicChartJS.js file in work.
+
+### index-2.js
+This file is used just to demonstrate the DynamicChartJS.js file in work. **With two charts on the same canvas**.
+### testcharts-2.html
+This file is used just to demonstrate the DynamicChartJS.js file in work. **With two charts on the same canvas**.
+
 ### DynamicChartJS.js
 This file is used to actually allow for dynamic charts.
 ### chart.js
