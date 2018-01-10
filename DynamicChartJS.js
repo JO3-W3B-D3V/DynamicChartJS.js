@@ -343,7 +343,7 @@ function DynamicChart (mda, lbls, chartType) {
         /**
          * @public showChart
          * NOTE: the purpose of this function is to just initiate the object
-         * TODO: allow for an array of extra objects to be inseted
+         * TODO: allow for an array of extra objects to be inserted
          * @required @param {String} chartId = the name of the id chart element
          * @required @param {String} eventType = the event that updates the chart
          * @required @param {HTML Object} swithElm = the switching elemnt
