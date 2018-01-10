@@ -2,7 +2,6 @@
  * @file DynamicChartJS.js
  * @author Joseph Evans <joe.evs196@hotmail.co.uk>
  * @version 0.0.1
- * @file DynamicCharts.js
  * @requires chart.js (RECOMMENDED:- version 2.7.1)
  * TODO: add the ability to change chart types
  * TODO: add the ability to change the defaults (options & data)
