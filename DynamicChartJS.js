@@ -1,25 +1,64 @@
 /**
- * @file
- * @name DynamicChartJS.js
- * @author Joseph Evans <joe.evs196@hotmail.co.uk>
- * @version 0.0.3
+ * @name     DynamicChartJS.js
+ * @author   Joseph Evans <joe.evs196@hotmail.co.uk>
+ * @version  0.0.3
+ * @license   MIT-License
+ * @copyright Joseph Evans 2018
+ * @file      the purpose of this file is to allow you to toggle between different data sets through
+ *            adding events to dome elements, in addition to changing the chart type(s), in addition
+ *            to addign the ability to input additional charts, if you want to see how I've done this
+ *            documentation, take a look at {@link http://usejsdoc.org/index.html}, it's a great
+ *            tool to allow you to document your javascript, I personally suggest more developers make use
+ *            of this tool
  * @requires chart.js {@link https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js}
  * @requires classList.min.js {@link http://purl.eligrey.com/github/classList.js/blob/master/classList.js}
- * TODO: add the ability to change chart types
- * TODO: add the ability to change the defaults (options & data)
- * BUG: this fails when using chart.js version 1.0.2 (chart.bar is not a function)
- *      it appears that the options are seupt differently
- *      the bug just appears that the options don't seem to work, nor does the styling
- * @copyright Joseph Evans
- * @license MIT-License
+ * @todo     add the ability to accept a list of additional
+ * @todo     correct any mistakes in code documentation, this has been somewhat rushed
+ * @todo     go through detailed testing, ensuring that it works across multiple devices and browsers
  */
 
+
 /**
+ * @ignore
+ * @global
+ * @name        classList.min.js
  * @description the purpose of this minified block below is to add spport for IE9
- *              without it, chart.js fails because IE9 doesn't support classlist
+ *              without it, chart.js fails because IE9 doesn't support classlist,
+ *              i copied the source code to add stability to this file, just to allow for some
+ *              support for IE9
+ * @see         {@link http://purl.eligrey.com/github/classList.js/blob/master/classList.js}
  */
 "document"in self&&("classList"in document.createElement("_")&&(!document.createElementNS||"classList"in document.createElementNS("http://www.w3.org/2000/svg","g"))||!function(t){"use strict";if("Element"in t){var e="classList",n="prototype",i=t.Element[n],s=Object,r=String[n].trim||function(){return this.replace(/^\s+|\s+$/g,"")},o=Array[n].indexOf||function(t){for(var e=0,n=this.length;n>e;e++)if(e in this&&this[e]===t)return e;return-1},c=function(t,e){this.name=t,this.code=DOMException[t],this.message=e},a=function(t,e){if(""===e)throw new c("SYNTAX_ERR","The token must not be empty.");if(/\s/.test(e))throw new c("INVALID_CHARACTER_ERR","The token must not contain space characters.");return o.call(t,e)},l=function(t){for(var e=r.call(t.getAttribute("class")||""),n=e?e.split(/\s+/):[],i=0,s=n.length;s>i;i++)this.push(n[i]);this._updateClassName=function(){t.setAttribute("class",this.toString())}},u=l[n]=[],h=function(){return new l(this)};if(c[n]=Error[n],u.item=function(t){return this[t]||null},u.contains=function(t){return~a(this,t+"")},u.add=function(){var t,e=arguments,n=0,i=e.length,s=!1;do t=e[n]+"",~a(this,t)||(this.push(t),s=!0);while(++n<i);s&&this._updateClassName()},u.remove=function(){var t,e,n=arguments,i=0,s=n.length,r=!1;do for(t=n[i]+"",e=a(this,t);~e;)this.splice(e,1),r=!0,e=a(this,t);while(++i<s);r&&this._updateClassName()},u.toggle=function(t,e){var n=this.contains(t),i=n?e!==!0&&"remove":e!==!1&&"add";return i&&this[i](t),e===!0||e===!1?e:!n},u.replace=function(t,e){var n=a(t+"");~n&&(this.splice(n,1,e),this._updateClassName())},u.toString=function(){return this.join(" ")},s.defineProperty){var f={get:h,enumerable:!0,configurable:!0};try{s.defineProperty(i,e,f)}catch(p){void 0!==p.number&&-2146823252!==p.number||(f.enumerable=!1,s.defineProperty(i,e,f))}}else s[n].__defineGetter__&&i.__defineGetter__(e,h)}}(self),function(){"use strict";var t=document.createElement("_");if(t.classList.add("c1","c2"),!t.classList.contains("c2")){var e=function(t){var e=DOMTokenList.prototype[t];DOMTokenList.prototype[t]=function(t){var n,i=arguments.length;for(n=0;i>n;n++)t=arguments[n],e.call(this,t)}};e("add"),e("remove")}if(t.classList.toggle("c3",!1),t.classList.contains("c3")){var n=DOMTokenList.prototype.toggle;DOMTokenList.prototype.toggle=function(t,e){return 1 in arguments&&!this.contains(t)==!e?e:n.call(this,t)}}"replace"in document.createElement("_").classList||(DOMTokenList.prototype.replace=function(t,e){var n=this.toString().split(" "),i=n.indexOf(t+"");~i&&(n=n.slice(i),this.remove.apply(this,n),this.add(e),this.add.apply(this,n.slice(1)))}),t=null}());
 
+
+/**
+ * @global
+ * @function
+ * @name        addEventHandler
+ * @param       {HTML} elem  the html element that you wish to target
+ * @param       {String} eventType  the event that you want the action to occur on
+ * @param       {Function} handler  the callback function
+ * @description the purpose of this private function is to allow for an event to be handled
+ */
+window.addEventHandler = function (elem, eventType, handler) {
+    if (elem.addEventListener) {
+        elem.addEventListener(eventType, handler, false);
+    } else if (elem.attachEvent) {
+        elem.attachEvent('on' + eventType, handler);
+    }
+};
+
+
+/**
+ * @global
+ * @function
+ * @name        ready
+ * @param       {Function} callBack  the purpose of this parameter is to allow the user to launch a function when the
+ *                                   document is ready
+ * @return      {Function}
+ * @description the prupose of this function is to allow for the same function to run ONCE the DOM has loaded
+ *              this function is shorter than jquery's solution where you'd use $(document).ready
+ */
  window.ready = function(callBack) {
      try {
        setTimeout(addEventHandler(document, "DOMContentLoaded", callBack), 20);
@@ -32,53 +71,54 @@
 
 
 /**
- * @class DynamicChart the purpose of this class is to work along side chart.js,
- *        allowing the user to input some html element, and update the chart
- * @param {String} chartType = the chart type that you want to maybe change to
- * @required @param {Multi Dimensional Array[Int]} mda  = multi dimensional array, an example has been provided below.
- * @required @param {Array[String]} labels = an array of labels
- * @return {Object}
+ * @global
+ * @class
+ * @constructor
+ * @name      DynamicChart
+ * @param     {String} chartType the chart type that you want to maybe change to
+ * @param     {Array} mda        the muldi dimensional array allows you to add actual data
+ * @param     {Array} labels     an array of labels
+ * @return    {Object}
+ * @classdesc the purpose of this class is to work along side chart.js,
+ *            allowing the user to input some html element, and update the chart
  */
 function DynamicChart (mda, lbls, chartType) {
-
-
     /**
-     * @private addEventHandler
-     * @required @param {HTML Object} elem = the html element that you wish to target
-     * @required @param {String} eventType = the event that you want the action to occur on
-     * @required @param {Function} handler = the callback function
-     */
-    var addEventHandler = function (elem, eventType, handler) {
-        if (elem.addEventListener) {
-            elem.addEventListener(eventType, handler, false);
-        } else if (elem.attachEvent) {
-            elem.attachEvent('on' + eventType, handler);
-        }
-    };
-
-
-    /**
-     *  @private NOTE: this is just an object which houses the @private functions
-     * the data amd options below are default, I should implement a way to changed
-     * these
-     * @class PrivateObject
+     * @private
+     * @property    {Object} PrivateObject the prupose of this property is to encapsulate some private functions
+     * @name        PrivateObject
+     * @type        {Object}
+     * @description the prupose of this property is to encapsulate some private functions
      */
     var PrivateObject = {
         /**
-         * @private temp place to hold the data for the data attribtue below
-         * BUG: the reason why this is here is due to the fact that it was a bit buggy with chart js
+         * @private
+         * @property    {Array} dataBlocks prupose of this is to allow this obejct to store the
+         *                      data that the user wishes to display
+         * @name        dataBlocks
+         * @default     mda
+         * @description the prupose of this is to allow this obejct to store the data that the user wishes
+         *              to display
          */
         dataBlocks : mda,
 
 
         /**
-         * @private this is the objects chart reference
+         * @private
+         * @property    {HTML} ctx the purpose of this is to store what html element you're trying to traget
+         * @name        ctx
+         * @default     ''
+         * @description the purpose of this is to store what html element you're trying to traget
          */
         ctx : '',
 
 
         /**
-         * @private default setup for the data for chart.js
+         * @private
+         * @property    {Object} data default setup for the data for chart.js
+         * @name        data
+         * @default     data
+         * @description default setup for the data for chart.js
          */
         data : {
             labels: lbls,
@@ -96,7 +136,11 @@ function DynamicChart (mda, lbls, chartType) {
 
 
         /**
-         * @private default setup for the options for chart.js
+         * @private
+         * @property    {Object} options default setup for the options for chart.js
+         * @name        options
+         * @default     options
+         * @description default setup for the options for chart.js
          */
         options : {
             responsive: true,
@@ -133,10 +177,12 @@ function DynamicChart (mda, lbls, chartType) {
 
 
         /**
-         * @private isDefined
-         * NOTE: the purpose of this function is just to make sure that a variable is defined
-         * @required @param {*} onj = the object/value that you want to test
-         * @return {Boolean}
+         * @private
+         * @function
+         * @name        isDefined
+         * @param       {Object} obj the object/value that you want to test
+         * @return      {Boolean}
+         * @description the purpose of this function is just to make sure that a variable is defined
          */
         isDefined : function (obj) {
             if (obj != null && typeof obj != 'undefined' && obj != '') return true;
@@ -145,10 +191,13 @@ function DynamicChart (mda, lbls, chartType) {
 
 
         /**
-         * @private isList
-         * NOTE: the purpose of this function is to see if the object is a list of objects or not
-         * @required @param {HTML Object}
-         * @return {Boolean}
+         * @private
+         * @function
+         * @name        isList
+         * @param       {Object} obj the object that you want to check if it's a list or not
+         * @return      {Boolean}
+         * @description the purpose of this function is to see if the object is a list or not and one with
+         *              a length longer than just 1
          */
         isList : function (obj) {
             if ((obj instanceof HTMLCollection || obj instanceof Array)
@@ -161,21 +210,26 @@ function DynamicChart (mda, lbls, chartType) {
 
 
         /**
-         * @private setHtmlElement
-         * NOTE: the purpose of this function is to set this objects target html element
-         * @required @param {HTML Object}
-         * @return {Void}
+         * @private
+         * @function
+         * @name        setHtmlElement
+         * @param       {HTML} html the html object you're trying to target
+         * @return      {Void}
+         * @description the purpose of this function is to set this objects target html element
          */
         setHtmlElement : function (html) {
             this.ctx = html;
         },
 
+
         /**
-         * @private resetCanvas
-         * NOTE: the purpose of this function is to just reset the canvas, it deletes the old html canvas
-         *       and then creates a new one
-         * @required @param {HTML Object} elm = the NAME of the html elemnt's ID that you wish to target
-         * @return {HTML Object}
+         * @private
+         * @function
+         * @name        resetCanvas
+         * @param       {HTML} elm the NAME of the html elemnt's ID that you wish to target
+         * @return      {HTML}
+         * @description the purpose of this function is to just reset the canvas, it deletes the old html canvas
+         *              and then creates a new one
          */
         resetCanvas : function (elm) {
             var x = document.getElementById(elm);
@@ -187,11 +241,13 @@ function DynamicChart (mda, lbls, chartType) {
 
 
         /**
-         * @private updateData
-         * NOTE: the purpose of this function is to purely update the data, then reset the canvas
-         * @required @param {Int} ind = the index of the multi dimensional array that you wish to target
-         * @required @param {String} chartId = the id of the chart that you're trying to target
-         * @return {Void}
+         * @private
+         * @function
+         * @name        updateData
+         * @param       {Int} ind        the index of the multi dimensional array that you wish to target
+         * @param       {String} chartId the id of the chart that you're trying to target
+         * @return      {Void}
+         * @description the purpose of this function is to purely update the data, then reset the canvas
          */
         updateData : function (ind, chartId) {
             var dataList = this.data.datasets;
@@ -212,11 +268,13 @@ function DynamicChart (mda, lbls, chartType) {
 
 
         /**
-         * @private getIndex
-         * NOTE: the purpseo of this function is to try different techniques to get the index of the data array
-         * @required @param {String} dataAttr = the data attribute of swithElm
-         * @required @param {String} chartId =  the chart itself
-         * @return {Int}
+         * @private
+         * @function
+         * @name        getIndex
+         * @param       {String} dataAttr the data attribute of swithElm
+         * @param       {String} chartId  the chart itself
+         * @return      {Int}
+         * @description the purpseo of this function is to try different techniques to get the index of the data array
          */
         getIndex : function (swithElm, dataAttr) {
             var ind;
@@ -244,13 +302,16 @@ function DynamicChart (mda, lbls, chartType) {
             return ind;
         },
 
+
         /**
-         * @private runner
-         * NOTE: basic function that updates the data
-         * @required @param {HTML Object} swithElm = the html element that you want to get data from
-         * @required @param {String} dataAttr = the data attribute of swithElm
-         * @required @param {String} chartId =  the chart itself
-         * @return {Void}
+         * @private
+         * @function
+         * @name        runner
+         * @param       {HTML} swithElm   the html element that you want to get data from
+         * @param       {String} dataAttr the data attribute of swithElm
+         * @param       {String} chartId  the chart itself
+         * @return      {Void}
+         * @description basic function that updates the data
          */
         runner : function (swithElm, dataAttr, chartId) {
             var ind = this.getIndex(swithElm, dataAttr);
@@ -259,9 +320,12 @@ function DynamicChart (mda, lbls, chartType) {
 
 
         /**
-         * @private renderChart
-         * NOTE: the  purpose of this function is to re-render the chart
-         * @return {Void}
+         * @private
+         * @function
+         * @name        renderChart
+         * @return      {Void}
+         * @description the purpose of this function is to re-render the chart when the chart has been
+         *              changed to some degree or another
          */
         renderChart : function () {
             var data = this.data;
@@ -271,8 +335,6 @@ function DynamicChart (mda, lbls, chartType) {
             var type = set.type;
 
 
-            // BUG: this is where the bug i mentioned above occurs, it's a partial fix at least, rather than
-            //      have the code come to a stand still at least.
             if (set.length > 1 || !this.isDefined(type)) {
                 try {
                     new Chart(ctx, {
@@ -306,11 +368,16 @@ function DynamicChart (mda, lbls, chartType) {
 
 
         /**
-         * @private labelExists
-         * NOTE: the purpose of this function is to scan across the labels when you want multiple charts
-         * @return {Boolean}
+         * @private
+         * @function
+         * @name        labelExists
+         * @param       {String} lbl the label that you're seraching for
+         * @return      {Boolean}
+         * @description the purpose of this function is to scan across the labels when you want multiple charts,
+         *              things can get a bit buggy without a check in advance, just to make sure that the chart doesn't
+         *              get added multiple times
          */
-        labelExists : function (x) {
+        labelExists : function (lbl) {
             var lblArray = [];
             var sets = this.data.datasets;
             for (var i = 0, s = sets.length; i < s; i++) {
@@ -320,7 +387,7 @@ function DynamicChart (mda, lbls, chartType) {
 
             if (lblArray.length < 2) {
                 return false;
-            } else if (lblArray.indexOf(x) > -1) {
+            } else if (lblArray.indexOf(lbl) > -1) {
                 return true;
             } else {
                 return false;
@@ -329,11 +396,13 @@ function DynamicChart (mda, lbls, chartType) {
 
 
         /**
-         * @private renderMultiCharts
-         * NOTE: the purpose of this function is to render multiple charts at the same time, ont eh same canvas
-         * TODO: make this functionality a bit more discrete and solid/reliable
-         * @required @param {Object} extra = additional data elm to put into the dataset
-         * @return {Void}
+         * @private
+         * @function
+         * @name        renderMultiCharts
+         * @param       {Object} extra additional data elm to put into the dataset
+         * @return      {Void}
+         * @description the purpose of this function is to render multiple charts at the same time, ont eh same canvas
+         * @todo        make this functionality a bit more discrete and solid/reliable
          */
         renderMultiCharts : function (extra) {
             if (!this.isDefined(extra)) return null;
@@ -355,29 +424,34 @@ function DynamicChart (mda, lbls, chartType) {
     };
 
     /**
-     * @public NOTE: this just contains all of the @public functions that you'd like to return
-     * @class PublicObject
-     * @type {Object}
+     * @public
+     * @property    {Object} PublicObject the prupose of this property is to encapsulate some private functions
+     * @name        PublicObject
+     * @type        {Object}
+     * @description the prupose of this property is to encapsulate some private functions
      */
     var PublicObject = {
 
 
         /**
-         * @public showChart
-         * NOTE: the purpose of this function is to just initiate the object
-         * TODO: allow for an array of extra objects to be inseted
-         * @required @param {String} chartId = the name of the id chart element
-         * @required @param {String} eventType = the event that updates the chart
-         * @required @param {HTML Object} swithElm = the switching elemnt
-         * @required @param {String} dataAttr = the data attribute(s)
-         * @param {Int} ind = the initial index that you wish to load
-         * @param {Object} extra = another setup for multi chart setup
-         * @return {Void}
+         * @public
+         * @function
+         * @name        showChart
+         * @param       {String} chartId   the name of the id chart element
+         * @param       {String} eventType the event that updates the chart
+         * @param       {HTML} swithElm    the switching elemnt
+         * @param       {String} dataAttr  the data attribute(s)
+         * @param       {Int} ind          the initial index that you wish to load
+         * @param       {Object} extra     another setup for multi chart setup
+         * @return      {Void}
+         * @description the purpose of this function is to just initiate the object
+         * @todo        allow for an array of extra objects to be inseted
          */
         showChart : function (chartId, eventType, swithElm, dataAttr, ind, extra) {
             /**
-             * NOTE: allows to run multiple charts on the same canvas
-             * TODO: make more discrete & encapsulated
+             * @ignore
+             * @description the purpose of this little block is to just check if there's
+             *              additional charts that you'd like to plot onto the same canvas
              */
             if (PrivateObject.isDefined(PrivateObject.dataBlocks[ind])
                 && PrivateObject.isList(PrivateObject.dataBlocks[ind])) {
@@ -386,6 +460,13 @@ function DynamicChart (mda, lbls, chartType) {
             }
 
 
+            /**
+             * @ignore
+             * @description the purpose of this little block is to check if the ind parameter
+             *              is somewhat valid, it also checks to see that the options and data is valid
+             *              this currently does very minor validation
+             * @todo        feedback if any of the following cases fail
+             */
             if (PrivateObject.isDefined(ind) && !isNaN(ind) && ind > -1) {
                 PrivateObject.data.datasets[0].data = PrivateObject.dataBlocks[ind];
             } if (PrivateObject.isDefined(data) && typeof data == 'object') {
@@ -395,12 +476,22 @@ function DynamicChart (mda, lbls, chartType) {
             }
 
 
+            /**
+             * @ignore
+             * @description the purpose of this little block below is to allow an event to
+             *              re-run this code when input changes
+             */
             var ctx = document.getElementById(chartId).getContext("2d");
             var data = PrivateObject.data;
             var options = PrivateObject.options;
             var tempFunction = function () { PrivateObject.runner(swithElm, dataAttr, chartId) };
 
 
+            /**
+             * @ignore
+             * @description the prupsoe of this little block is to apply the event handler to the html
+             *              that has been provided to this function
+             */
             PrivateObject.setHtmlElement(document.getElementById(chartId));
             PrivateObject.renderChart();
             if (PrivateObject.isList(swithElm)) {
@@ -415,10 +506,12 @@ function DynamicChart (mda, lbls, chartType) {
 
 
         /**
-         * @public getData
-         * NOTE: The purpose of this function is to return the private objects data
-         *       this way the user can change it as they like
-         * @return {Object}
+         * @public
+         * @function
+         * @name        getData
+         * @return      {Object}
+         * @description the purpose of this function is to return the private objects data
+         *              this way the user can change it as they like
          */
         getData : function () {
             return PrivateObject.data;
@@ -426,11 +519,13 @@ function DynamicChart (mda, lbls, chartType) {
 
 
         /**
-         * @public setData
-         * NOTE: the purpose of this function is to allow the user to edit the data outside
-         *      of the object
-         * @required @param newData = the new data that will be assigned to this objects data
-         * @return {Void}
+         * @public
+         * @function
+         * @name         setData
+         * @param        {Object} newData the new data that will be assigned to this objects data
+         * @return       {Void}
+         * @description  the purpose of this function is to allow the user to edit the data outside
+         *               of the object
          */
         setData : function (newData) {
             if (PrivateObject.isDefined(newData)) {
@@ -442,10 +537,12 @@ function DynamicChart (mda, lbls, chartType) {
 
 
         /**
-         * @public getOptions
-         * NOTE: the purpose of this function is to allow users to retrieve the options
-         *       and edit them as they like
-         * @return {Object}
+         * @public
+         * @function
+         * @name        getOptions
+         * @return      {Object}
+         * @description the purpose of this function is to allow users to retrieve the options
+         *              and edit them as they like
          */
         getOptions : function () {
             return PrivateObject.options;
@@ -454,9 +551,11 @@ function DynamicChart (mda, lbls, chartType) {
 
         /**
          * @public
-         * NOTE: the purpose of this function is to allow the user to update the options as they like
-         * @required @param newOptions = a new set of options for the chart js
-         * @return {Void}
+         * @function
+         * @name        setOptions
+         * @param       {Object} newOptions a new set of options for the chart js
+         * @return      {Void}
+         * @description the purpose of this function is to allow the user to update the options as they like
          */
         setOptions : function (newOptions) {
             if (PrivateObject.isDefined(newOptions)) {
@@ -468,5 +567,8 @@ function DynamicChart (mda, lbls, chartType) {
     };
 
 
+    /**
+     * @description this return just outputs all of the public functions and variables
+     */
     return PublicObject;
 };
