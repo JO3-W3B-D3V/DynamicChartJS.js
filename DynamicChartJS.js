@@ -3,7 +3,7 @@
  * @name DynamicChartJS.js
  * @author Joseph Evans <joe.evs196@hotmail.co.uk>
  * @version 0.0.3
- * @requires chart.js (RECOMMENDED:- version 2.7.1)
+ * @requires chart.js {@link https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js}
  * @requires classList.min.js {@link http://purl.eligrey.com/github/classList.js/blob/master/classList.js}
  * TODO: add the ability to change chart types
  * TODO: add the ability to change the defaults (options & data)
