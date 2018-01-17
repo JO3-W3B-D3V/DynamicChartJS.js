@@ -1,6 +1,6 @@
 /**
  * @name     DynamicChartJS.js
- * @author   Joseph Evans <joe.evs196@hotmail.co.uk>
+ * @author   Joseph Evans <joe-evs196@hotmail.co.uk>
  * @version  0.0.3
  * @license   MIT-License
  * @copyright Joseph Evans 2018
@@ -15,7 +15,6 @@
  * @todo     add the ability to accept a list of additional
  * @todo     correct any mistakes in code documentation, this has been somewhat rushed
  * @todo     go through detailed testing, ensuring that it works across multiple devices and browsers
- * @todo     test further for bugs whenever possible
  */
 
 
@@ -42,14 +41,10 @@
  * @description the purpose of this private function is to allow for an event to be handled
  */
 window.addEventHandler = function (elem, eventType, handler) {
-    try {
-        if (elem.addEventListener) {
-            elem.addEventListener(eventType, handler, false);
-        } else if (elem.attachEvent) {
-            elem.attachEvent('on' + eventType, handler);
-        }
-    } catch (e) {
-        return false;
+    if (elem.addEventListener) {
+        elem.addEventListener(eventType, handler, false);
+    } else if (elem.attachEvent) {
+        elem.attachEvent('on' + eventType, handler);
     }
 };
 
@@ -65,16 +60,12 @@ window.addEventHandler = function (elem, eventType, handler) {
  *              this function is shorter than jquery's solution where you'd use $(document).ready
  */
  window.ready = function(callBack) {
-    try {
+     try {
        setTimeout(addEventHandler(document, "DOMContentLoaded", callBack), 20);
-    } catch (e) {
-        try {
-           addEventHandler(document, "DOMContentLoaded", callBack);
-           console.log(e.message);
-       } catch (e2) {
-           return console.log(e2.message);
-       }
-    }
+     } catch (e) {
+       addEventHandler(document, "DOMContentLoaded", callBack);
+       console.log(e.message);
+     }
  };
 
 
@@ -209,16 +200,12 @@ function DynamicChart (mda, lbls, chartType) {
          *              a length longer than just 1
          */
         isList : function (obj) {
-            try {
-                if ((obj instanceof HTMLCollection || obj instanceof Array)
-                    || (this.isDefined(obj.length)
-                    && obj.length > 1)
-                    && obj.tagName.toLowerCase() != 'select'
-                ) return true;
-                else return false;
-            } catch (e) {
-                return false; // safety feature
-            }
+            if ((obj instanceof HTMLCollection || obj instanceof Array)
+                || (this.isDefined(obj.length)
+                && obj.length > 1)
+                && obj.tagName.toLowerCase() != 'select'
+            ) return true;
+            else return false;
         },
 
 
@@ -290,36 +277,29 @@ function DynamicChart (mda, lbls, chartType) {
          * @description the purpseo of this function is to try different techniques to get the index of the data array
          */
         getIndex : function (swithElm, dataAttr) {
-            try {
-                var ind;
+            var ind;
 
-                if (this.isList(swithElm)) {
-                    swithElm = event.target;
-                }
+            if (this.isList(swithElm)) {
+                swithElm = event.target;
+            }
 
-                if (this.isDefined(swithElm.getAttribute(dataAttr))) {
-                    ind = swithElm.getAttribute(dataAttr);
-                } else if (this.isDefined(swithElm.dataAttr)) {
-                    ind = swithElm.dataAttr;
-                } else if (dataAttr == "value") {
-                    ind = swithElm.value;
-                } else if (this.isDefined(swithElm.options[swithElm.selectedIndex])) {
-                    ind = swithElm.options[swithElm.selectedIndex];
-                } else if (this.isDefined(swithElm[dataAttr])) {
-                    ind = swithElm[dataAttr];
-                } else if (typeof ind == 'undefined') {
-                    return 0;
-                } else { // fallback to ensure that a number is always returned
-                    return 0;
-                }
-
-                return ind;
-
-
-            } catch (e) {
-                console.log(e.message);
+            if (this.isDefined(swithElm.getAttribute(dataAttr))) {
+                ind = swithElm.getAttribute(dataAttr);
+            } else if (this.isDefined(swithElm.dataAttr)) {
+                ind = swithElm.dataAttr;
+            } else if (dataAttr == "value") {
+                ind = swithElm.value;
+            } else if (this.isDefined(swithElm.options[swithElm.selectedIndex])) {
+                ind = swithElm.options[swithElm.selectedIndex];
+            } else if (this.isDefined(swithElm[dataAttr])) {
+                ind = swithElm[dataAttr];
+            } else if (typeof ind == 'undefined') {
+                return 0;
+            } else { // fallback to ensure that a number is always returned
                 return 0;
             }
+
+            return ind;
         },
 
 
@@ -439,12 +419,7 @@ function DynamicChart (mda, lbls, chartType) {
                 }
             }
 
-            if (allowPush) {
-                //var old = this.data.datasets.pop();
-                //console.log();
-                this.data.datasets.push(extra);
-                //this.data.datasets.push(old);
-            }
+            if (allowPush) {this.data.datasets.push(extra); }
         }
     };
 
@@ -525,11 +500,7 @@ function DynamicChart (mda, lbls, chartType) {
                     addEventHandler(current, eventType, tempFunction);
                 }
             } else {
-                if(addEventHandler(swithElm, eventType, tempFunction)) {
-                    addEventHandler(swithElm, eventType, tempFunction);
-                } else {
-                    tempFunction();
-                }
+                addEventHandler(swithElm, eventType, tempFunction);
             }
         },
 
